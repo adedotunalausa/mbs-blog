@@ -1,99 +1,92 @@
-package com.adedotunalausa.week9taskadedotunalausa.service.implementation;
+package com.adedotunalausa.week9taskadedotunalausa.registration;
 
 import com.adedotunalausa.week9taskadedotunalausa.email.EmailSender;
 import com.adedotunalausa.week9taskadedotunalausa.model.User;
+import com.adedotunalausa.week9taskadedotunalausa.model.UserRole;
 import com.adedotunalausa.week9taskadedotunalausa.registration.token.ConfirmationToken;
 import com.adedotunalausa.week9taskadedotunalausa.registration.token.ConfirmationTokenService;
-import com.adedotunalausa.week9taskadedotunalausa.repository.UserRepository;
 import com.adedotunalausa.week9taskadedotunalausa.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class RegistrationService {
 
-    private final static String USER_NOT_FOUND_MSG = "User with email %s not found";
-
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserService userService;
+    private final EmailValidator emailValidator;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
 
-    @Override
-    public String signUpUser(User newUser) {
-        boolean userExists = userRepository.findByEmail(newUser.getEmail()).isPresent();
-
-        if (userExists) {
-            if (newUser.getEnabled()) {
-                throw new IllegalStateException("email already taken");
-            }
-            if(!newUser.getEnabled()) {
-                User existingUser = userRepository.findByEmail(newUser.getEmail()).get();
-                String token = UUID.randomUUID().toString();
-                ConfirmationToken confirmationToken = new ConfirmationToken(token, LocalDateTime.now(),
-                        LocalDateTime.now().plusMinutes(15), existingUser);
-                confirmationTokenService.saveConfirmationToken(confirmationToken);
-
-                String confirmationLink = "http://localhost:6545/api/registration/confirm?token=" + token;
-                emailSender.send(existingUser.getEmail(), buildEmail(existingUser.getFirstname(), confirmationLink));
-                throw new IllegalStateException("Email exists, check your email to confirm your account");
-            }
+    public String register(RegistrationRequest request) {
+        boolean isValidEmail = emailValidator.test(request.getEmail());
+        if (!isValidEmail) {
+            throw new IllegalStateException("email not valid");
         }
 
-        String encodedPassword = bCryptPasswordEncoder.encode(newUser.getPassword());
+        String token = userService.signUpUser(
+                new User(
+                        request.getFirstname(),
+                        request.getLastname(),
+                        request.getGender(),
+                        request.getAddress(),
+                        request.getCity(),
+                        request.getState(),
+                        request.getCountry(),
+                        request.getEmail(),
+                        request.getPassword(),
+                        UserRole.USER
+                )
+        );
 
-        newUser.setPassword(encodedPassword);
-
-        userRepository.save(newUser);
-
-        String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = new ConfirmationToken(token, LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15), newUser);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        String confirmationLink = "http://localhost:6545/api/registration/confirm?token=" + token;
+        emailSender.send(request.getEmail(), buildEmail(request.getFirstname(), confirmationLink));
 
         return token;
     }
 
-    @Override
-    public int enableUser(String email) {
-        return userRepository.enableUser(email);
-    }
-
-//    @Override
-//    public User getUser(String email, String password) {
-//        return userRepository.findByEmailAndPassword(email, password);
-//    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
+    @Transactional
+    public String confirmToken(String token) {
+        ConfirmationToken confirmationToken = confirmationTokenService
+                .getToken(token)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
+                        new IllegalStateException("token not found"));
+
+        if (confirmationToken.getConfirmedAt() != null) {
+            throw new IllegalStateException("email already confirmed");
+        }
+
+        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
+
+        if (expiredAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("token expired");
+        }
+
+        confirmationTokenService.setConfirmedAt(token);
+        userService.enableUser(
+                confirmationToken.getUser().getEmail());
+
+        return "confirmed";
     }
 
     public String buildEmail(String name, String link) {
-        return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0.5px;color:#0b0c0c\">\n" +
+        return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
                 "\n" +
                 "  <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;min-width:100%;width:100%!important\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n" +
                 "    <tbody><tr>\n" +
-                "      <td width=\"100%\" height=\"54\" bgcolor=\"#0b0c0c\">\n" +
+                "      <td width=\"100%\" height=\"53\" bgcolor=\"#0b0c0c\">\n" +
                 "        \n" +
                 "        <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;max-width:580px\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n" +
                 "          <tbody><tr>\n" +
-                "            <td width=\"71\" bgcolor=\"#0b0c0c\" valign=\"middle\">\n" +
+                "            <td width=\"70\" bgcolor=\"#0b0c0c\" valign=\"middle\">\n" +
                 "                <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
                 "                  <tbody><tr>\n" +
-                "                    <td style=\"padding-left:11px\">\n" +
+                "                    <td style=\"padding-left:10px\">\n" +
                 "                  \n" +
                 "                    </td>\n" +
                 "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
@@ -135,7 +128,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
                 "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> You've already registered. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
                 "        \n" +
                 "      </td>\n" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +

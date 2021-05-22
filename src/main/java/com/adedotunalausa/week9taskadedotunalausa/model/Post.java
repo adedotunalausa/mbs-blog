@@ -18,9 +18,7 @@ public class Post extends AuditModel {
     protected Long postId;
 
     protected Long userId;
-
     protected String postTitle;
-
     protected String postContent;
 
 

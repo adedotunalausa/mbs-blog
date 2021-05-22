@@ -3,6 +3,7 @@ package com.adedotunalausa.week9taskadedotunalausa.service;
 import com.adedotunalausa.week9taskadedotunalausa.model.User;
 
 public interface UserService {
-    User createUser(User user);
-    User getUser(String email, String password);
+    String signUpUser(User user);
+    int enableUser(String email);
+//    User getUser(String email, String password);
 }
