@@ -14,11 +14,13 @@ public class Post extends AuditModel {
     @Id
     @GeneratedValue(generator = "post_generator")
     @SequenceGenerator(name = "post_generator",
-            sequenceName = "post_sequence", initialValue = 5100)
+            sequenceName = "post_sequence", initialValue = 1460)
     protected Long postId;
 
-    protected Long userId;
+    protected Long username;
+
     protected String postTitle;
+
     protected String postContent;
 
 

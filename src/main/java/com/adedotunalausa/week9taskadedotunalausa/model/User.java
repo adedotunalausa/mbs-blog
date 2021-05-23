@@ -9,18 +9,23 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.*;
 
 @Data
 @Entity
-@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class User extends AuditModel implements UserDetails {
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        }
+)
+public class User extends AuditModel {
 
     @Id
     @GeneratedValue(generator = "user_generator")
@@ -28,81 +33,50 @@ public class User extends AuditModel implements UserDetails {
             sequenceName = "user_sequence", initialValue = 5100)
     protected Long userId;
 
+    @NotBlank
+    @Size(max = 20)
+    protected String username;
+
     protected String firstname;
+
     protected String lastname;
+
     protected String gender;
+
     protected String address;
+
     protected String city;
+
     protected String state;
+
     protected String country;
+
+    @NotBlank
+    @Size(max = 50)
+    @Email
     protected String email;
+
+    @NotBlank
+    @Size(max = 120)
     protected String password;
 
-    @Enumerated(EnumType.STRING)
-    protected UserRole userRole;
-
-    protected Boolean locked = false;
-    protected Boolean enabled = false;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(	name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(targetEntity = Post.class, cascade = CascadeType.ALL)
     protected List<Post> posts = new ArrayList<>();
 
-    public User(String firstname, String lastname, String gender,
-                String address, String city, String state, String country, String email,
-                String password, UserRole userRole) {
+    public User(String username, String firstname, String lastname,
+                String gender, String email, String password) {
+        this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.gender = gender;
-        this.address = address;
-        this.city = city;
-        this.state = state;
-        this.country = country;
         this.email = email;
         this.password = password;
-        this.userRole = userRole;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
-        return Collections.singletonList(authority);
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !locked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
 }
