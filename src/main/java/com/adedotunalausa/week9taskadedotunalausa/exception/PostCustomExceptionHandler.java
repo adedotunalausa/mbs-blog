@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class PostCustomExceptionHandler {
 
-    @ExceptionHandler(value = PostNotFoundException.class)
-    public ResponseEntity<String> postNotFoundException(PostNotFoundException exception) {
+    @ExceptionHandler(value = AppResourceNotFoundException.class)
+    public ResponseEntity<String> postNotFoundException(AppResourceNotFoundException exception) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         return new ResponseEntity<>(MethodUtils.prepareErrorJSON(status, exception), status);
     }

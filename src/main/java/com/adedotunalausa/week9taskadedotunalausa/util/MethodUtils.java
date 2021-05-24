@@ -2,12 +2,24 @@ package com.adedotunalausa.week9taskadedotunalausa.util;
 
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 public class MethodUtils {
 
     private  MethodUtils() {}
+
+    public static String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
+        }
+
+        return null;
+    }
 
     public static String prepareErrorJSON(HttpStatus status, Exception ex) {
 
@@ -17,4 +29,5 @@ public class MethodUtils {
         errorJSON.put("message", Objects.requireNonNull(ex.getMessage()).split(":")[0]);
         return errorJSON.toString();
     }
+
 }

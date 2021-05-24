@@ -19,17 +19,17 @@ public class Comment extends AuditModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long commentId;
 
-    @ManyToOne
-    protected User user;
+    @Column(name = "comment_by")
+    protected String commentBy;
 
-    @Column(name = "postId")
+    @Column(name = "post_id")
     protected Long postId;
 
-    @Column(name = "commentBody")
+    @Column(name = "comment_body")
     protected String commentBody;
 
-    public Comment(User user, Long postId, String commentBody) {
-        this.user = user;
+    public Comment(String commentBy, Long postId, String commentBody) {
+        this.commentBy = commentBy;
         this.postId = postId;
         this.commentBody = commentBody;
     }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -65,6 +66,10 @@ public class User extends AuditModel {
 
     @OneToMany(targetEntity = Post.class, cascade = CascadeType.ALL)
     protected List<Post> posts = new ArrayList<>();
+
+    @OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL)
+    @JsonIgnore
+    protected List<Comment> comments = new ArrayList<>();
 
     public User(String username, String firstname, String lastname,
                 String gender, String email, String password) {

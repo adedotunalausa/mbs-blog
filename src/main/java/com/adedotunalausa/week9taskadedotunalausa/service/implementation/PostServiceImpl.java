@@ -1,7 +1,7 @@
 package com.adedotunalausa.week9taskadedotunalausa.service.implementation;
 
 import com.adedotunalausa.week9taskadedotunalausa.exception.ApplicationException;
-import com.adedotunalausa.week9taskadedotunalausa.exception.PostNotFoundException;
+import com.adedotunalausa.week9taskadedotunalausa.exception.AppResourceNotFoundException;
 import com.adedotunalausa.week9taskadedotunalausa.model.Post;
 import com.adedotunalausa.week9taskadedotunalausa.repository.PostRepository;
 import com.adedotunalausa.week9taskadedotunalausa.service.PostService;
@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +21,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public void createPost(Post newPost) {
         postRepository.save(newPost);
+    }
+
+    @Override
+    public Post getPostById(Long postId) {
+        return postRepository.findById(postId).orElseThrow(
+                () -> new AppResourceNotFoundException("Post not found!")
+        );
     }
 
     @Override
@@ -43,7 +52,7 @@ public class PostServiceImpl implements PostService {
             post.setPostContent(currentPost.getPostContent());
             return postRepository.save(post);
         }).orElseThrow(
-                () -> new PostNotFoundException("Post not found")
+                () -> new AppResourceNotFoundException("Post not found!")
         );
     }
 }
