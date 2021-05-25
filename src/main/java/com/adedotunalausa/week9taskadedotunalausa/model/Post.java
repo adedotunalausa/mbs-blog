@@ -25,6 +25,9 @@ public class Post extends AuditModel {
     @Column(name = "username")
     protected String username;
 
+    @Column(name = "user_id")
+    protected Long userId;
+
     protected String postTitle;
 
     protected String postContent;
@@ -35,8 +38,9 @@ public class Post extends AuditModel {
     @OneToMany(targetEntity = PostLike.class, cascade = CascadeType.ALL, mappedBy = "postId")
     protected Set<PostLike> likes;
 
-    public Post(String username, String postTitle, String postContent) {
+    public Post(String username, Long userId, String postTitle, String postContent) {
         this.username = username;
+        this.userId = userId;
         this.postTitle = postTitle;
         this.postContent = postContent;
     }

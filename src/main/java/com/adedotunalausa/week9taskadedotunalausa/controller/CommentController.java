@@ -38,7 +38,7 @@ public class CommentController {
         if (currentUser != null && currentPost !=null) {
             Long currentPostId = newComment.getPostId();
             String commentBody = newComment.getCommentBody();
-            Comment comment = new Comment(username, currentPostId, commentBody);
+            Comment comment = new Comment(username, currentUser.getUserId(), currentPostId, commentBody);
             commentService.createComment(comment);
             return comment;
         }

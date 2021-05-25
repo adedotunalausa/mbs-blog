@@ -48,7 +48,8 @@ public class PostController {
         User currentUser = userService.getUserByUsername(username);
 
         if (currentUser != null) {
-            Post post = new Post(username, newPost.getPostTitle(), newPost.getPostContent());
+            Post post = new Post(username, currentUser.getUserId(),
+                    newPost.getPostTitle(), newPost.getPostContent());
             postService.createPost(post);
             return post;
         }

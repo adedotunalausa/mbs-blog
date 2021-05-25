@@ -64,16 +64,8 @@ public class User extends AuditModel {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(targetEntity = Post.class, cascade = CascadeType.ALL, mappedBy = "username")
-    protected Set<Post> posts;
-
-    @OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL, mappedBy = "commentBy")
-    @JsonIgnore
-    protected Set<Comment> comments;
-
-    @OneToMany(targetEntity = PostLike.class, cascade = CascadeType.ALL, mappedBy = "likedBy")
-    @JsonIgnore
-    protected Set<PostLike> postLikes;
+    @OneToMany(targetEntity = Post.class, cascade = CascadeType.ALL, mappedBy = "userId")
+    protected List<Post> posts;
 
     public User(String username, String firstname, String lastname,
                 String gender, String email, String password) {

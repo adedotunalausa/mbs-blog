@@ -5,6 +5,8 @@ import com.adedotunalausa.week9taskadedotunalausa.model.User;
 import com.adedotunalausa.week9taskadedotunalausa.repository.UserRepository;
 import com.adedotunalausa.week9taskadedotunalausa.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +18,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveOrUpdateUser(User user) {
         userRepository.save(user);
+    }
+
+    @Override
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override

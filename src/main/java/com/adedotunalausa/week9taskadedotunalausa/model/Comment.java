@@ -23,6 +23,9 @@ public class Comment extends AuditModel {
     @Column(name = "comment_by")
     protected String commentBy;
 
+    @Column(name = "user_id")
+    protected Long userId;
+
     @Column(name = "post_id")
     protected Long postId;
 
@@ -32,8 +35,9 @@ public class Comment extends AuditModel {
     @OneToMany(targetEntity = CommentLike.class, cascade = CascadeType.ALL, mappedBy = "commentId")
     protected Set<CommentLike> likes;
 
-    public Comment(String commentBy, Long postId, String commentBody) {
+    public Comment(String commentBy, Long userId, Long postId, String commentBody) {
         this.commentBy = commentBy;
+        this.userId = userId;
         this.postId = postId;
         this.commentBody = commentBody;
     }
