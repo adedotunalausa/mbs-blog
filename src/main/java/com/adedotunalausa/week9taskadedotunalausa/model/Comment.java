@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
@@ -27,6 +28,9 @@ public class Comment extends AuditModel {
 
     @Column(name = "comment_body")
     protected String commentBody;
+
+    @OneToMany(targetEntity = CommentLike.class, cascade = CascadeType.ALL, mappedBy = "commentId")
+    protected Set<CommentLike> likes;
 
     public Comment(String commentBy, Long postId, String commentBody) {
         this.commentBy = commentBy;

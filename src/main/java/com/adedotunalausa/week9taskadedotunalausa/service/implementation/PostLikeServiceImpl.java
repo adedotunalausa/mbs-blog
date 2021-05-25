@@ -36,6 +36,10 @@ public class PostLikeServiceImpl implements PostLikeService {
 
     @Override
     public PostLike getPostLikeByUsernameAndPostId(String username, Long postId) {
-        return postLikeRepository.findByLikedByAndPostId(username, postId).get();
+        if (postLikeRepository.findByLikedByAndPostId(username, postId).isPresent()) {
+            return postLikeRepository.findByLikedByAndPostId(username, postId).get();
+        } else {
+            return null;
+        }
     }
 }
