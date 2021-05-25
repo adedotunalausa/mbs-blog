@@ -46,6 +46,7 @@ public class PostServiceImpl implements PostService {
         if (currentPostId == null) {
             throw new ApplicationException("Post Id missing, Id is required for update");
         }
+
         return postRepository.findById(currentPostId).map(post -> {
             post.setPostId(currentPostId);
             post.setPostTitle(currentPost.getPostTitle());

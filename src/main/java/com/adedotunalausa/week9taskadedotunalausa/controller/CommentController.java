@@ -1,5 +1,6 @@
 package com.adedotunalausa.week9taskadedotunalausa.controller;
 
+import com.adedotunalausa.week9taskadedotunalausa.exception.ApplicationException;
 import com.adedotunalausa.week9taskadedotunalausa.model.Comment;
 import com.adedotunalausa.week9taskadedotunalausa.model.Post;
 import com.adedotunalausa.week9taskadedotunalausa.model.User;
@@ -39,15 +40,23 @@ public class CommentController {
             String commentBody = newComment.getCommentBody();
             Comment comment = new Comment(username, currentPostId, commentBody);
             commentService.createComment(comment);
-            currentPost.getComments().add(comment);
-            postService.createPost(currentPost);
-            currentUser.getComments().add(comment);
-            userService.saveOrUpdateUser(currentUser);
             return comment;
         }
 
         return null;
     }
 
+    @PutMapping("/edit-comment")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public Comment editComment(@Valid @RequestBody Comment currentComment, HttpServletRequest request) {
+        String jwt = MethodUtils.parseJwt(request);
+        String username = jwtUtils.getUserNameFromJwtToken(jwt);
+        Comment savedComment = commentService.getCommentById(currentComment.getCommentId());
 
+        if (!username.equals(savedComment.getCommentBy())) {
+            throw new ApplicationException("Operation failed! You can only edit comments posted by you");
+        }
+
+        return commentService.updateComment(currentComment);
+    }
 }

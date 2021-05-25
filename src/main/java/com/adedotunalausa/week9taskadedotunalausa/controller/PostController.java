@@ -1,5 +1,6 @@
 package com.adedotunalausa.week9taskadedotunalausa.controller;
 
+import com.adedotunalausa.week9taskadedotunalausa.exception.ApplicationException;
 import com.adedotunalausa.week9taskadedotunalausa.model.Post;
 import com.adedotunalausa.week9taskadedotunalausa.model.User;
 import com.adedotunalausa.week9taskadedotunalausa.repository.UserRepository;
@@ -49,8 +50,6 @@ public class PostController {
         if (currentUser != null) {
             Post post = new Post(username, newPost.getPostTitle(), newPost.getPostContent());
             postService.createPost(post);
-            currentUser.getPosts().add(post);
-            userService.saveOrUpdateUser(currentUser);
             return post;
         }
 
@@ -59,7 +58,15 @@ public class PostController {
 
     @PutMapping("/edit-post")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public Post editPost(@Valid @RequestBody Post currentPost) {
+    public Post editPost(@Valid @RequestBody Post currentPost, HttpServletRequest request) {
+        String jwt = MethodUtils.parseJwt(request);
+        String username = jwtUtils.getUserNameFromJwtToken(jwt);
+        Post savedPost = postService.getPostById(currentPost.getPostId());
+
+        if (!username.equals(savedPost.getUsername())) {
+            throw new ApplicationException("Operation failed! You can only edit posts posted by you");
+        }
+
         return postService.updatePost(currentPost);
     }
 

@@ -6,8 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -23,14 +22,18 @@ public class Post extends AuditModel {
             sequenceName = "post_sequence", initialValue = 1460)
     protected Long postId;
 
+    @Column(name = "username")
     protected String username;
 
     protected String postTitle;
 
     protected String postContent;
 
-    @OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL)
-    protected List<Comment> comments = new ArrayList<>();
+    @OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL, mappedBy = "postId")
+    protected Set<Comment> comments;
+
+    @OneToMany(targetEntity = PostLike.class, cascade = CascadeType.ALL, mappedBy = "postId")
+    protected Set<PostLike> likes;
 
     public Post(String username, String postTitle, String postContent) {
         this.username = username;
