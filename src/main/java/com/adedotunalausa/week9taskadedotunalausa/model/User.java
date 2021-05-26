@@ -67,6 +67,9 @@ public class User extends AuditModel {
     @OneToMany(targetEntity = Post.class, cascade = CascadeType.ALL, mappedBy = "userId")
     protected List<Post> posts;
 
+    @OneToMany(targetEntity = FavouritePost.class, cascade = CascadeType.ALL, mappedBy = "userId")
+    protected List<FavouritePost> favouritePosts;
+
     public User(String username, String firstname, String lastname,
                 String gender, String email, String password) {
         this.username = username;
