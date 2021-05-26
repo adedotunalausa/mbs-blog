@@ -2,17 +2,12 @@ package com.adedotunalausa.week9taskadedotunalausa.service.implementation;
 
 import com.adedotunalausa.week9taskadedotunalausa.exception.AppResourceNotFoundException;
 import com.adedotunalausa.week9taskadedotunalausa.model.User;
-import com.adedotunalausa.week9taskadedotunalausa.model.UserConnection;
 import com.adedotunalausa.week9taskadedotunalausa.repository.UserRepository;
-import com.adedotunalausa.week9taskadedotunalausa.service.UserConnectionService;
 import com.adedotunalausa.week9taskadedotunalausa.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
