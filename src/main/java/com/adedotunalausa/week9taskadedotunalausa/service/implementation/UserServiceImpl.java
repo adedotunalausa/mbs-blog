@@ -16,8 +16,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public void saveOrUpdateUser(User user) {
-        userRepository.save(user);
+    public User getUserByUserId(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new AppResourceNotFoundException("User not found!")
+        );
     }
 
     @Override

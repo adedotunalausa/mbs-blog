@@ -3,7 +3,6 @@ package com.adedotunalausa.week9taskadedotunalausa.controller;
 import com.adedotunalausa.week9taskadedotunalausa.exception.ApplicationException;
 import com.adedotunalausa.week9taskadedotunalausa.model.Post;
 import com.adedotunalausa.week9taskadedotunalausa.model.User;
-import com.adedotunalausa.week9taskadedotunalausa.repository.UserRepository;
 import com.adedotunalausa.week9taskadedotunalausa.security.jwt.JwtUtils;
 import com.adedotunalausa.week9taskadedotunalausa.service.PostService;
 import com.adedotunalausa.week9taskadedotunalausa.service.UserService;
@@ -69,12 +68,6 @@ public class PostController {
         }
 
         return postService.updatePost(currentPost);
-    }
-
-    @GetMapping("/favourites-posts")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public String viewFavouritePosts() {
-        return "Favourites.";
     }
 
 }

@@ -5,7 +5,6 @@ import com.adedotunalausa.week9taskadedotunalausa.model.Post;
 import com.adedotunalausa.week9taskadedotunalausa.repository.FavouritePostRepository;
 import com.adedotunalausa.week9taskadedotunalausa.service.FavouritePostService;
 import com.adedotunalausa.week9taskadedotunalausa.service.PostService;
-import com.adedotunalausa.week9taskadedotunalausa.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ public class FavouritePostServiceImpl implements FavouritePostService {
 
     private final FavouritePostRepository favouritePostRepository;
     private final PostService postService;
-    private final UserService userService;
 
     @Override
     public ResponseEntity<String> addPostToFavourite(Long postId, Long userId) {
