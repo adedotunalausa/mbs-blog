@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserConnectionServiceImpl implements UserConnectionService {
@@ -28,5 +30,10 @@ public class UserConnectionServiceImpl implements UserConnectionService {
         UserConnection newConnection = new UserConnection(sender, receiver);
         userConnectionRepository.save(newConnection);
         return new ResponseEntity<>("Connection created successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public List<UserConnection> getUserConnections(User user) {
+        return userConnectionRepository.findAllBySenderEqualsOrReceiverEquals(user, user);
     }
 }
