@@ -39,8 +39,7 @@ public class CommentController {
             Long currentPostId = newComment.getPostId();
             String commentBody = newComment.getCommentBody();
             Comment comment = new Comment(username, currentUser.getUserId(), currentPostId, commentBody);
-            commentService.createComment(comment);
-            return comment;
+            return commentService.createComment(comment);
         }
 
         return null;
@@ -54,7 +53,7 @@ public class CommentController {
         Comment savedComment = commentService.getCommentById(currentComment.getCommentId());
 
         if (!username.equals(savedComment.getCommentBy())) {
-            throw new ApplicationException("Operation failed! You can only edit comments posted by you");
+            throw new ApplicationException("Operation failed! You can only edit comments created by you");
         }
 
         return commentService.updateComment(currentComment);

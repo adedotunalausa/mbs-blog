@@ -90,7 +90,7 @@ public class PostController {
         Post savedPost = postService.getPostById(currentPost.getPostId());
 
         if (!username.equals(savedPost.getUsername())) {
-            throw new ApplicationException("Operation failed! You can only edit posts posted by you");
+            throw new ApplicationException("Operation failed! You can only edit posts created by you");
         }
 
         return postService.updatePost(currentPost);

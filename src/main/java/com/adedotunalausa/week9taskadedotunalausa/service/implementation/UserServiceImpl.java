@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         try {
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MINUTE, 1);
+            calendar.add(Calendar.HOUR, 24);
             String deactivationDate = dateFormat.format(calendar.getTime());
             currentUser.setDeactivationDate(deactivationDate);
             userRepository.save(currentUser);
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
             int deactivationIndication = today.compareTo(deactivationDate);
             if (deactivationIndication >= 0) {
                 user.setUsername(null);
-                user.setDeactivated(true);
+                user.setIsDeactivated(true);
                 userRepository.save(user);
             }
         });

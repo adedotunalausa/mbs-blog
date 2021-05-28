@@ -2,7 +2,6 @@ package com.adedotunalausa.week9taskadedotunalausa.service.implementation;
 
 import com.adedotunalausa.week9taskadedotunalausa.model.Post;
 import com.adedotunalausa.week9taskadedotunalausa.repository.PostRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,10 +25,6 @@ class PostServiceImplTest {
     @InjectMocks
     private PostServiceImpl postService;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     void createPost() {
         Post newPost = new Post("ade", 1938L, "test title", "test content");
@@ -48,8 +43,6 @@ class PostServiceImplTest {
     void getPostById() {
         Long postId = 1632L;
         Post newPost = new Post("ade", 1632L, "test title", "test content");
-
-        System.out.println(newPost.getPostTitle());
 
         given(postRepository.findById(postId)).willReturn(java.util.Optional.of(newPost));
 
@@ -85,8 +78,4 @@ class PostServiceImplTest {
         assertEquals(expected, posts);
     }
 
-    @Test
-    void updatePost() {
-
-    }
 }

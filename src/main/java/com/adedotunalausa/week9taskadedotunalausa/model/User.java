@@ -73,7 +73,7 @@ public class User extends AuditModel {
     protected String deactivationDate;
 
     @Column(name = "is_deactivated")
-    protected boolean isDeactivated;
+    protected Boolean isDeactivated;
 
     public User(String username, String firstname, String lastname,
                 String gender, String email, String password) {
