@@ -76,8 +76,7 @@ public class PostController {
         if (currentUser != null) {
             Post post = new Post(username, currentUser.getUserId(),
                     newPost.getPostTitle(), newPost.getPostContent());
-            postService.createPost(post);
-            return post;
+            return postService.createPost(post);
         }
 
         return null;

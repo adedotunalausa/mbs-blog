@@ -8,4 +8,7 @@ public interface UserService {
     User getUserByUserId(Long userId);
     Page<User> getAllUsers(Pageable pageable);
     User getUserByUsername(String username);
+    boolean setDeactivationDate(User currentUser);
+    boolean removeDeactivationDate(User currentUser);
+    void deactivateUsers();
 }

@@ -1,4 +1,4 @@
-package com.adedotunalausa.week9taskadedotunalausa.payload.request;
+package com.adedotunalausa.week9taskadedotunalausa.authpayload.request;
 
 import lombok.Data;
 

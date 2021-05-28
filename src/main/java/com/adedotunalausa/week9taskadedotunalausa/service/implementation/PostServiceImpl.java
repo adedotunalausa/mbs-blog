@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -19,8 +19,8 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     @Override
-    public void createPost(Post newPost) {
-        postRepository.save(newPost);
+    public Post createPost(Post newPost) {
+        return postRepository.save(newPost);
     }
 
     @Override
@@ -36,8 +36,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
+    }
+
+    @Override
     public Page<Post> getPostsByUsername(String username, Pageable pageable) {
         return postRepository.findByUsername(username, pageable);
+    }
+
+    @Override
+    public List<Post> getPostsByUsername(String username) {
+        return postRepository.findByUsername(username);
     }
 
     @Override

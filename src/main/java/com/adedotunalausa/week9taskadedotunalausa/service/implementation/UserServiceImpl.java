@@ -9,6 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -32,6 +37,55 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username).orElseThrow(
                 () -> new AppResourceNotFoundException("User not found!")
         );
+    }
+
+    @Override
+    public boolean setDeactivationDate(User currentUser) {
+        boolean response = false;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MINUTE, 1);
+            String deactivationDate = dateFormat.format(calendar.getTime());
+            currentUser.setDeactivationDate(deactivationDate);
+            userRepository.save(currentUser);
+            response = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    @Override
+    public boolean removeDeactivationDate(User currentUser) {
+        boolean response = false;
+        try {
+            if (!currentUser.getDeactivationDate().isEmpty()) {
+                currentUser.setDeactivationDate(null);
+                userRepository.save(currentUser);
+                response = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    @Override
+    public void deactivateUsers() {
+        List<User> users = userRepository.findAllByDeactivationDateNotNullAndUsernameNotNull();
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        users.forEach(user -> {
+            String today = dateFormat.format(date);
+            String deactivationDate = user.getDeactivationDate();
+            int deactivationIndication = today.compareTo(deactivationDate);
+            if (deactivationIndication >= 0) {
+                user.setUsername(null);
+                user.setDeactivated(true);
+                userRepository.save(user);
+            }
+        });
     }
 
 }

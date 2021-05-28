@@ -1,4 +1,4 @@
-package com.adedotunalausa.week9taskadedotunalausa.payload.request;
+package com.adedotunalausa.week9taskadedotunalausa.authpayload.request;
 
 import lombok.Data;
 
@@ -36,9 +36,5 @@ public class SignupRequest {
 
     public Set<String> getRole() {
         return this.role;
-    }
-
-    public void setRole(Set<String> role) {
-        this.role = role;
     }
 }

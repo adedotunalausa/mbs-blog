@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -69,6 +68,12 @@ public class User extends AuditModel {
 
     @OneToMany(targetEntity = FavouritePost.class, cascade = CascadeType.ALL, mappedBy = "userId")
     protected List<FavouritePost> favouritePosts;
+
+    @Column(name = "deactivation_date")
+    protected String deactivationDate;
+
+    @Column(name = "is_deactivated")
+    protected boolean isDeactivated;
 
     public User(String username, String firstname, String lastname,
                 String gender, String email, String password) {
