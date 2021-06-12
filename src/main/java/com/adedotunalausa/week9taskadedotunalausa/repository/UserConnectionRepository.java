@@ -12,4 +12,5 @@ public interface UserConnectionRepository extends JpaRepository<UserConnection, 
     boolean existsByReceiverAndSender(User receiver, User sender);
     boolean existsBySenderAndReceiver(User sender, User receiver);
     List<UserConnection> findAllBySenderEqualsOrReceiverEquals(User sender, User receiver);
+    void deleteAllBySenderEqualsOrReceiverEquals(User sender, User receiver);
 }

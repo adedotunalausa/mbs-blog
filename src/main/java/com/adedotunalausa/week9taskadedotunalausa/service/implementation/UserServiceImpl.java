@@ -2,6 +2,7 @@ package com.adedotunalausa.week9taskadedotunalausa.service.implementation;
 
 import com.adedotunalausa.week9taskadedotunalausa.exception.AppResourceNotFoundException;
 import com.adedotunalausa.week9taskadedotunalausa.model.User;
+//import com.adedotunalausa.week9taskadedotunalausa.repository.UserConnectionRepository;
 import com.adedotunalausa.week9taskadedotunalausa.repository.UserRepository;
 import com.adedotunalausa.week9taskadedotunalausa.service.UserService;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+//    private final UserConnectionRepository userConnectionRepository;
 
     @Override
     public User getUserByUserId(Long userId) {
@@ -84,6 +87,7 @@ public class UserServiceImpl implements UserService {
                 user.setUsername(null);
                 user.setIsDeactivated(true);
                 userRepository.save(user);
+//                userConnectionRepository.deleteAllBySenderEqualsOrReceiverEquals(user, user);
             }
         });
     }
