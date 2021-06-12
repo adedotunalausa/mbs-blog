@@ -1,3 +1,3 @@
-# week-9-task-adedotunalausa
+# mbs-blog
 
-week-9-task-adedotunalausa created by GitHub Classroom
+Its a blog api created with spring boot and uses swagger for documentation
